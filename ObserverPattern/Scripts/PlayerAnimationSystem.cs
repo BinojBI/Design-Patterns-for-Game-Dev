@@ -3,11 +3,13 @@ using UnityEngine;
 public class PlayerAnimationSystem : MonoBehaviour, IObserver
 {
     [SerializeField] Subject playerSubject;
+    [SerializeField]  private Animator playerAnimator;
     public void OnNotify(PlayerBehaviour behavior)
     {
         if(behavior == PlayerBehaviour.Jump)
         {
             Debug.Log("player jump animation works");
+            playerAnimator.SetTrigger("jump");
         }
     }
 
@@ -15,6 +17,8 @@ public class PlayerAnimationSystem : MonoBehaviour, IObserver
     {
         playerSubject.AddObserver(this);
     }
+
+
 
     private void OnDisable()
     {
