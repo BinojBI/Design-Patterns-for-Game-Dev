@@ -1,3 +1,4 @@
+using TMPro;
 using UnityEngine;
 
 namespace StatePattern
@@ -10,6 +11,7 @@ namespace StatePattern
         public float followRange = 5f;
         public float attackRange = 1.5f;
         public int health = 3;
+        public TextMeshProUGUI healthText;
 
         [HideInInspector] public EnemyStateMachine stateMachine;
 
@@ -33,6 +35,8 @@ namespace StatePattern
                 return;
 
             health--;
+            healthText.text = "Enemy Health : " + health.ToString();
+
             if (health > 0)
                 stateMachine.ChangeState(new EnemyHitState(this, stateMachine));
             else

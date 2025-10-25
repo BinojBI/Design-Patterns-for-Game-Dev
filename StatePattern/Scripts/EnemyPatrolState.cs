@@ -18,11 +18,22 @@ namespace StatePattern
             if (enemy.patrolPoints.Length == 0) return;
 
             Transform targetPoint = enemy.patrolPoints[currentPoint];
-            enemy.transform.position = Vector3.MoveTowards(
-                enemy.transform.position,
-                targetPoint.position,
-                enemy.moveSpeed * Time.deltaTime
-            );
+
+            Vector3 direction = (targetPoint.position - enemy.transform.position).normalized;
+            direction.y = 0f;
+
+            if (direction != Vector3.zero)
+            {
+                Quaternion targetRotation = Quaternion.LookRotation(direction);
+                enemy.transform.rotation = Quaternion.Slerp(
+                    enemy.transform.rotation,
+                    targetRotation,
+                    Time.deltaTime * 5f // rotation speed multiplier
+                );
+            }
+
+            // Move forward
+            enemy.transform.position += direction * enemy.moveSpeed * Time.deltaTime;
 
             if (Vector3.Distance(enemy.transform.position, targetPoint.position) < 0.1f)
             {
