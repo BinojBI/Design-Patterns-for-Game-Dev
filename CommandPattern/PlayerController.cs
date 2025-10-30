@@ -1,3 +1,4 @@
+using System.Collections;
 using UnityEngine;
 using UnityEngine.InputSystem.XR;
 
@@ -12,6 +13,9 @@ namespace CoommandPattern
         [SerializeField]
         private float jumpHeight = 1f;
         private bool isGrounded;
+        [SerializeField]
+        private float attackRotateSpeed = 360f;
+        private bool isAttacking = false;
 
         private void Awake()
         {
@@ -30,6 +34,8 @@ namespace CoommandPattern
 
         public void Move(Vector3 direction)
         {
+            if (isAttacking) return;
+
             Vector3 move = transform.TransformDirection(direction);
             controller.Move(move * speed * Time.deltaTime);
         }
@@ -45,8 +51,33 @@ namespace CoommandPattern
 
         public void Attack()
         {
+            if (!isAttacking)
+            {
+                StartCoroutine(AttackRotate());
+            }
+        }
+
+        private IEnumerator AttackRotate()
+        {
+            isAttacking = true;
             Debug.Log("Player attacked!");
-            // Play attack animation
+
+            float rotated = 0f;
+
+            while (rotated < 360f)
+            {
+                float rotateStep = attackRotateSpeed * Time.deltaTime;
+                transform.Rotate(0f, rotateStep, 0f);
+                rotated += rotateStep;
+                yield return null;
+            }
+
+            // Ensure exact rotation
+            Vector3 euler = transform.eulerAngles;
+            euler.y = Mathf.Round(euler.y / 360f) * 360f;
+            transform.eulerAngles = euler;
+
+            isAttacking = false;
         }
 
     }
